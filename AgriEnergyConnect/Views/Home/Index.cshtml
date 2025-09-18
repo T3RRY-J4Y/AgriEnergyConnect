@@ -1,8 +1,32 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AgriEnergyConnect.Models.ApplicationUser> SignInManager
+@inject UserManager<AgriEnergyConnect.Models.ApplicationUser> UserManager
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h1>Welcome to Agri-Energy Connect</h1>
+<p>This platform bridges farmers with renewable energy providers and employees.</p>
+
+@if (SignInManager.IsSignedIn(User))
+{
+    if (User.IsInRole("Farmer"))
+    {
+        <h2>Farmer Dashboard</h2>
+        <ul>
+            <li><a asp-controller="Products" asp-action="MyProducts">View My Products</a></li>
+            <li><a asp-controller="Products" asp-action="Create">Add New Product</a></li>
+        </ul>
+    }
+    else if (User.IsInRole("Employee"))
+    {
+        <h2>Employee Dashboard</h2>
+        <ul>
+            <li><a asp-controller="Farmers" asp-action="Index">View Farmers</a></li>
+            <li><a asp-controller="Farmers" asp-action="Create">Add New Farmer</a></li>
+            <li><a asp-controller="Products" asp-action="AllProducts">View All Products</a></li>
+        </ul>
+    }
+}
+else
+{
+    <h2>Please log in to access the platform.</h2>
+    <p><a asp-area="Identity" asp-page="/Account/Login">Login</a></p>
+}
