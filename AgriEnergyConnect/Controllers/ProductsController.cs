@@ -55,10 +55,10 @@ namespace AgriEnergyConnect.Controllers
 
             if (ModelState.IsValid)
             {
-                // Set FarmerId automatically
+                // Link product to farmer
                 product.FarmerId = user.FarmerId.Value;
 
-                // Set default ProductionDate if not provided
+                // Default ProductionDate if not provided
                 if (product.ProductionDate == default)
                     product.ProductionDate = DateTime.UtcNow;
 

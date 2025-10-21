@@ -3,6 +3,7 @@ using AgriEnergyConnect.Models;
 using AgriEnergyConnect.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AgriEnergyConnect.Controllers
 {
@@ -10,11 +11,16 @@ namespace AgriEnergyConnect.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ApplicationDbContext _context;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AccountController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
         }
 
         // GET: /Account/Register
@@ -29,25 +35,28 @@ namespace AgriEnergyConnect.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+            // Create new user
+            var user = new ApplicationUser
+            {
+                UserName = model.Email,
+                Email = model.Email
+            };
+
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
-                // Create Farmer profile linked to this user
-                var context = HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
-
+                // Create Farmer profile
                 var farmer = new Farmer
                 {
-                    Name = model.Name,           // get Name from RegisterViewModel
-                    Location = model.Location    // get Location from RegisterViewModel
+                    Name = model.Name,       // Add Name to RegisterViewModel
+                    Location = model.Location
                 };
 
-                // Save farmer to DB
-                context.Farmers.Add(farmer);
-                await context.SaveChangesAsync();
+                _context.Farmers.Add(farmer);
+                await _context.SaveChangesAsync();
 
-                // Link user to farmer
+                // Link user to farmer profile
                 user.FarmerId = farmer.Id;
                 await _userManager.UpdateAsync(user);
 
@@ -67,10 +76,6 @@ namespace AgriEnergyConnect.Controllers
             return View(model);
         }
 
-
-
-
-
         // GET: /Account/Login
         [HttpGet]
         public IActionResult Login() => View();
@@ -88,27 +93,20 @@ namespace AgriEnergyConnect.Controllers
 
             if (result.Succeeded)
             {
-                // Get the logged-in user
                 var user = await _userManager.FindByEmailAsync(model.Email);
 
-                // Check roles and redirect accordingly
                 if (await _userManager.IsInRoleAsync(user, "Employee"))
-                {
-                    return RedirectToAction("Index", "Farmers"); // Employee dashboard
-                }
-                else if (await _userManager.IsInRoleAsync(user, "Farmer"))
-                {
-                    return RedirectToAction("MyProducts", "Products"); // Farmer dashboard
-                }
+                    return RedirectToAction("Index", "Farmers"); // Employee/Admin dashboard
 
-                // Default fallback
+                if (await _userManager.IsInRoleAsync(user, "Farmer"))
+                    return RedirectToAction("MyProducts", "Products"); // Farmer dashboard
+
                 return RedirectToAction("Index", "Home");
             }
 
             ModelState.AddModelError("", "Invalid login attempt.");
             return View(model);
         }
-
 
         // POST: /Account/Logout
         [HttpPost]

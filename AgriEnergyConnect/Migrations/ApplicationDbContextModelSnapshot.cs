@@ -125,7 +125,7 @@ namespace AgriEnergyConnect.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("FarmerId")
+                    b.Property<int?>("FarmerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -288,9 +288,7 @@ namespace AgriEnergyConnect.Migrations
                 {
                     b.HasOne("AgriEnergyConnect.Models.Farmer", "Farmer")
                         .WithMany("Products")
-                        .HasForeignKey("FarmerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("FarmerId");
 
                     b.Navigation("Farmer");
                 });

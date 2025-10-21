@@ -15,7 +15,7 @@ namespace AgriEnergyConnect.Models
         [DataType(DataType.Date)]
         public DateTime ProductionDate { get; set; }
 
-        public int FarmerId { get; set; }
-        public Farmer Farmer { get; set; } = null!;
+        public int? FarmerId { get; set; }
+        public Farmer? Farmer { get; set; } = null!;
     }
 }
