@@ -5,7 +5,7 @@ namespace AgriEnergyConnect.Models.ViewModels
     public class RegisterViewModel
     {
         [Required]
-        public string Name { get; set; } = null!;  // Added Name property
+        public string Name { get; set; } = null!;
 
         [Required]
         [EmailAddress]

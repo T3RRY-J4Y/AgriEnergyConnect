@@ -49,7 +49,7 @@ namespace AgriEnergyConnect.Controllers
                 // Create Farmer profile
                 var farmer = new Farmer
                 {
-                    Name = model.Name,       // Add Name to RegisterViewModel
+                    Name = model.Name,      
                     Location = model.Location
                 };
 
