@@ -22,7 +22,10 @@
     <!-- Custom CSS -->
     <link href="~/css/site.css" rel="stylesheet" />
 </head>
-<body class="d-flex flex-column min-vh-100 bg-light">
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- Background Image with Parallax & Overlay -->
+    <div class="bg-image"></div>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm sticky-top">
@@ -77,10 +80,9 @@
         </div>
     </nav>
 
-
     <!-- Main Content -->
     <main class="container mt-4 mb-5 flex-fill">
-        <div class="card shadow-sm rounded-4 p-4">
+        <div class="card shadow-sm rounded-4 p-4" style="background-color: rgba(255,255,255,0.9);">
             <h2 class="mb-4 text-success fw-bold">@ViewData["Title"]</h2>
             @RenderBody()
         </div>
@@ -94,5 +96,21 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     @RenderSection("Scripts", required: false)
+
+    <style>
+        /* Full-page background with parallax & overlay */
+        .bg-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('/images/background.jpg') no-repeat center center;
+            background-size: cover;
+            z-index: -1; /* behind all content */
+            filter: brightness(0.7); /* subtle dark overlay for readability */
+            background-attachment: fixed; /* parallax effect */
+        }
+    </style>
 </body>
 </html>
