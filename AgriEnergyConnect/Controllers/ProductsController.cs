@@ -55,21 +55,93 @@ namespace AgriEnergyConnect.Controllers
 
             if (ModelState.IsValid)
             {
-                // Link product to farmer
                 product.FarmerId = user.FarmerId.Value;
-
-                // Default ProductionDate if not provided
                 if (product.ProductionDate == default)
                     product.ProductionDate = DateTime.UtcNow;
 
                 _context.Products.Add(product);
                 await _context.SaveChangesAsync();
-
-                // Redirect to farmer's product list
                 return RedirectToAction(nameof(MyProducts));
             }
 
             return View(product);
+        }
+
+        // Farmer dashboard: show edit form
+        [Authorize(Roles = "Farmer")]
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var user = await _userManager.GetUserAsync(User);
+            var product = await _context.Products
+                .FirstOrDefaultAsync(p => p.Id == id && p.FarmerId == user.FarmerId);
+
+            if (product == null) return NotFound();
+
+            return View(product);
+        }
+
+        // Farmer dashboard: save edited product
+        [HttpPost]
+        [Authorize(Roles = "Farmer")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Product product)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (id != product.Id || product.FarmerId != user.FarmerId)
+                return NotFound();
+
+            if (!ModelState.IsValid) return View(product);
+
+            try
+            {
+                _context.Update(product);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProductExists(id)) return NotFound();
+                throw;
+            }
+
+            return RedirectToAction(nameof(MyProducts));
+        }
+
+        // Farmer dashboard: confirm delete
+        [Authorize(Roles = "Farmer")]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var user = await _userManager.GetUserAsync(User);
+            var product = await _context.Products
+                .Include(p => p.Farmer)
+                .FirstOrDefaultAsync(p => p.Id == id && p.FarmerId == user.FarmerId);
+
+            if (product == null) return NotFound();
+
+            return View(product);
+        }
+
+        // Farmer dashboard: perform delete
+        [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Farmer")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var product = await _context.Products
+                .FirstOrDefaultAsync(p => p.Id == id && p.FarmerId == user.FarmerId);
+
+            if (product != null)
+            {
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(MyProducts));
         }
 
         // Employee/Admin dashboard: view all products
@@ -89,6 +161,11 @@ namespace AgriEnergyConnect.Controllers
 
             var products = await query.ToListAsync();
             return View(products);
+        }
+
+        private bool ProductExists(int id)
+        {
+            return _context.Products.Any(p => p.Id == id);
         }
     }
 }

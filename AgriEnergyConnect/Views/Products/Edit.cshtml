@@ -1,0 +1,42 @@
+﻿@model AgriEnergyConnect.Models.Product
+
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<div class="card shadow-sm rounded-4 border-0 p-4">
+    <h4 class="text-success fw-bold mb-4">Edit Product</h4>
+
+    <form asp-action="Edit" method="post" class="needs-validation" novalidate>
+        <input type="hidden" asp-for="Id" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label fw-semibold">Product Name</label>
+            <input asp-for="Name" class="form-control" placeholder="Enter product name" />
+            <span asp-validation-for="Name" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Category" class="form-label fw-semibold">Category</label>
+            <input asp-for="Category" class="form-control" placeholder="Enter product category" />
+            <span asp-validation-for="Category" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ProductionDate" class="form-label fw-semibold">Production Date</label>
+            <input asp-for="ProductionDate" type="date" class="form-control" />
+            <span asp-validation-for="ProductionDate" class="text-danger small"></span>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <a asp-action="MyProducts" class="btn btn-outline-secondary me-2">Cancel</a>
+            <button type="submit" class="btn btn-success">Save Changes</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

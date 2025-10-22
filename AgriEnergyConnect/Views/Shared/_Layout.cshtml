@@ -2,97 +2,97 @@
 @inject SignInManager<AgriEnergyConnect.Models.ApplicationUser> SignInManager
 @inject UserManager<AgriEnergyConnect.Models.ApplicationUser> UserManager
 
+@{
+    var isLoggedIn = User.Identity?.IsAuthenticated ?? false;
+    var userRole = isLoggedIn
+        ? (User.IsInRole("Employee") ? "Employee" : "Farmer")
+        : string.Empty;
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"] - Agri-Energy Connect</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link href="~/css/site.css" rel="stylesheet" />
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-light bg-light border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">Agri-Energy Connect</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
+<body class="d-flex flex-column min-vh-100 bg-light">
 
-                        @if (SignInManager.IsSignedIn(User))
-                        {
-                            var currentUser = await UserManager.GetUserAsync(User);
-                            if (await UserManager.IsInRoleAsync(currentUser, "Farmer"))
-                            {
-                                <!-- Farmer dashboard links -->
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Products" asp-action="MyProducts">My Products</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Products" asp-action="Create">Add Product</a>
-                                </li>
-                            }
-                            else if (await UserManager.IsInRoleAsync(currentUser, "Employee"))
-                            {
-                                <!-- Employee/Admin dashboard links -->
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Farmers" asp-action="Index">All Farmers</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Products" asp-action="AllProducts">All Products</a>
-                                </li>
-                            }
-                        }
-                    </ul>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-white" asp-controller="Home" asp-action="Index">
+                🌱 AgriEnergyConnect
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-                    <ul class="navbar-nav">
-                        @if (SignInManager.IsSignedIn(User))
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    @if (isLoggedIn)
+                    {
+                        @if (userRole == "Employee")
                         {
                             <li class="nav-item">
-                                <span class="navbar-text">Hello, @UserManager.GetUserName(User)!</span>
+                                <a class="nav-link text-white" asp-controller="Farmers" asp-action="Index">Farmers</a>
                             </li>
                             <li class="nav-item">
-                                <form asp-controller="Account" asp-action="Logout" method="post" class="form-inline">
-                                    <button type="submit" class="btn btn-link nav-link">Logout</button>
-                                </form>
+                                <a class="nav-link text-white" asp-controller="Products" asp-action="AllProducts">Products</a>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                                <a class="nav-link text-white" asp-controller="Products" asp-action="MyProducts">My Products</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
+                                <a class="nav-link text-white" asp-controller="Products" asp-action="Create">Add Product</a>
                             </li>
                         }
-                    </ul>
-                </div>
+
+                        <li class="nav-item">
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-outline-light btn-sm ms-2">Logout</button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Account" asp-action="Login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Account" asp-action="Register">Register</a>
+                        </li>
+                    }
+                </ul>
             </div>
-        </nav>
-    </header>
-
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; @DateTime.Now.Year - Agri-Energy Connect
         </div>
+    </nav>
+
+
+    <!-- Main Content -->
+    <main class="container mt-4 mb-5 flex-fill">
+        <div class="card shadow-sm rounded-4 p-4">
+            <h2 class="mb-4 text-success fw-bold">@ViewData["Title"]</h2>
+            @RenderBody()
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-success text-white text-center py-3 mt-auto">
+        <small>&copy; @DateTime.Now.Year - AgriEnergyConnect | Built for Sustainable Agriculture 🌾</small>
     </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

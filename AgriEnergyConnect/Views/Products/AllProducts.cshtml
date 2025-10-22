@@ -1,32 +1,63 @@
 ﻿@model IEnumerable<AgriEnergyConnect.Models.Product>
 
-<h2>All Products</h2>
+@{
+    ViewData["Title"] = "All Products";
+}
 
-<form asp-action="AllProducts" method="get">
-    <input type="text" name="category" placeholder="Filter by category" />
-    <input type="date" name="startDate" />
-    <input type="date" name="endDate" />
-    <button type="submit">Filter</button>
-</form>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold text-success">All Registered Products</h4>
+</div>
 
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Category</th>
-            <th>Production Date</th>
-            <th>Farmer</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var product in Model)
-        {
-            <tr>
-                <td>@product.Name</td>
-                <td>@product.Category</td>
-                <td>@product.ProductionDate.ToShortDateString()</td>
-                <td>@product.Farmer.Name (@product.Farmer.Location)</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<!-- Filter Form -->
+<div class="card shadow-sm rounded-4 mb-4 p-3">
+    <form asp-action="AllProducts" method="get" class="row g-3 align-items-end">
+        <div class="col-md-4">
+            <label for="category" class="form-label fw-semibold">Category</label>
+            <input type="text" name="category" class="form-control" placeholder="Filter by category" />
+        </div>
+        <div class="col-md-3">
+            <label for="startDate" class="form-label fw-semibold">Start Date</label>
+            <input type="date" name="startDate" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label for="endDate" class="form-label fw-semibold">End Date</label>
+            <input type="date" name="endDate" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-success w-100">Filter</button>
+        </div>
+    </form>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info text-center shadow-sm">
+        <strong>No products found.</strong> Products will appear once farmers add them 🌿
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle shadow-sm">
+            <thead class="table-success">
+                <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Production Date</th>
+                    <th>Farmer</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model)
+                {
+                    <tr>
+                        <td>@product.Name</td>
+                        <td>@product.Category</td>
+                        <td>@product.ProductionDate.ToShortDateString()</td>
+                        <td>@product.Farmer?.Name (@product.Farmer?.Location)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

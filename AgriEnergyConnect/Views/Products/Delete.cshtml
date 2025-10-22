@@ -1,0 +1,19 @@
+﻿@model AgriEnergyConnect.Models.Product
+
+@{
+    ViewData["Title"] = "Delete Product";
+}
+
+<div class="card shadow-sm rounded-4 border-0 p-4 text-center">
+    <h4 class="text-danger fw-bold mb-4">Delete Product</h4>
+
+    <p class="mb-4">Are you sure you want to delete <strong>@Model.Name</strong> from your products?</p>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="d-flex justify-content-center gap-3">
+            <a asp-action="MyProducts" class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        </div>
+    </form>
+</div>

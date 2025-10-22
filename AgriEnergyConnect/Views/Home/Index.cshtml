@@ -2,31 +2,72 @@
 @inject SignInManager<AgriEnergyConnect.Models.ApplicationUser> SignInManager
 @inject UserManager<AgriEnergyConnect.Models.ApplicationUser> UserManager
 
-<h1>Welcome to Agri-Energy Connect</h1>
-<p>This platform bridges farmers with renewable energy providers and employees.</p>
+@{
+    ViewData["Title"] = "Home";
+    var isLoggedIn = User.Identity?.IsAuthenticated ?? false;
+    var userRole = isLoggedIn
+        ? (User.IsInRole("Employee") ? "Employee" : "Farmer")
+        : string.Empty;
+}
 
-@if (SignInManager.IsSignedIn(User))
-{
-    if (User.IsInRole("Farmer"))
+<!-- Hero Section -->
+<div class="container mt-5">
+    <div class="jumbotron text-center bg-success text-white rounded-4 p-5 shadow-sm">
+        <h1 class="display-4 fw-bold">Welcome to Agri-Energy Connect 🌱</h1>
+        <p class="lead">A platform bridging farmers with renewable energy providers and employees.</p>
+        @if (!isLoggedIn)
+        {
+            <a asp-controller="Account" asp-action="Login" class="btn btn-light btn-lg mt-3">Login to Get Started</a>
+        }
+    </div>
+
+    <!-- Dashboard Links -->
+    @if (isLoggedIn)
     {
-        <h2>Farmer Dashboard</h2>
-        <ul>
-            <li><a asp-controller="Products" asp-action="MyProducts">View My Products</a></li>
-            <li><a asp-controller="Products" asp-action="Create">Add New Product</a></li>
-        </ul>
+        <div class="row mt-5 justify-content-center">
+            @if (userRole == "Farmer")
+            {
+                <div class="col-md-6">
+                    <div class="card shadow-sm rounded-4 p-4 mb-4">
+                        <h2 class="text-success fw-bold">Farmer Dashboard</h2>
+                        <p>Manage your products and track your farming activities.</p>
+                        <a asp-controller="Products" asp-action="MyProducts" class="btn btn-success me-2">View My Products</a>
+                        <a asp-controller="Products" asp-action="Create" class="btn btn-outline-success">Add New Product</a>
+                    </div>
+                </div>
+            }
+            else if (userRole == "Employee")
+            {
+                <div class="col-md-6">
+                    <div class="card shadow-sm rounded-4 p-4 mb-4">
+                        <h2 class="text-success fw-bold">Employee Dashboard</h2>
+                        <p>Monitor farmers and manage all products across the platform.</p>
+                        <a asp-controller="Farmers" asp-action="Index" class="btn btn-success me-2">View Farmers</a>
+                        <a asp-controller="Products" asp-action="AllProducts" class="btn btn-outline-success me-2">View All Products</a>
+                        <a asp-controller="Farmers" asp-action="Create" class="btn btn-outline-success">Add New Farmer</a>
+                    </div>
+                </div>
+            }
+        </div>
     }
-    else if (User.IsInRole("Employee"))
+    else
     {
-        <h2>Employee Dashboard</h2>
-        <ul>
-            <li><a asp-controller="Farmers" asp-action="Index">View Farmers</a></li>
-            <li><a asp-controller="Farmers" asp-action="Create">Add New Farmer</a></li>
-            <li><a asp-controller="Products" asp-action="AllProducts">View All Products</a></li>
-        </ul>
+        <div class="alert alert-info mt-4 text-center shadow-sm">
+            Please log in to access the platform and start managing products or farmers.
+        </div>
     }
-}
-else
-{
-    <h2>Please log in to access the platform.</h2>
-    <p><a asp-area="Account" asp-page="/Account/Login">Login</a></p>
-}
+
+    <!-- About Section -->
+    <div class="row mt-5 mb-5">
+        <div class="col-md-12 text-center">
+            <h2 class="fw-bold text-success">About Agri-Energy Connect</h2>
+            <p class="lead">Our mission is to empower farmers by connecting them with renewable energy providers and employees to foster sustainable agriculture practices across South Africa.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .jumbotron {
+        background: linear-gradient(135deg, #198754 0%, #6fcd82 100%);
+    }
+</style>

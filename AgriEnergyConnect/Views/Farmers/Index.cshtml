@@ -1,27 +1,60 @@
 ﻿@model IEnumerable<AgriEnergyConnect.Models.Farmer>
 
-<h2>Farmers</h2>
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Location</th>
-            <th>Products</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var farmer in Model)
-        {
-            <tr>
-                <td>@farmer.Name</td>
-                <td>@farmer.Location</td>
-                <td>
-                    @foreach (var p in farmer.Products)
-                    {
-                        <div>@p.Name (@p.Category)</div>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+@{
+    ViewData["Title"] = "All Farmers";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold text-success">Registered Farmers</h4>
+    <a asp-action="Create" class="btn btn-success shadow-sm">+ Add Farmer</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info text-center shadow-sm">
+        <strong>No farmers found.</strong> Add a new farmer to get started 🌿
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle shadow-sm">
+            <thead class="table-success">
+                <tr>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Products</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var farmer in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">@farmer.Name</td>
+                        <td>@farmer.Location</td>
+                        <td>
+                            @if (farmer.Products != null && farmer.Products.Any())
+                            {
+                                <ul class="list-unstyled mb-0">
+                                    @foreach (var p in farmer.Products)
+                                    {
+                                        <li>🌾 @p.Name <span class="text-muted small">(@p.Category)</span></li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <span class="text-muted">No products yet</span>
+                            }
+                        </td>
+                        <td class="text-center">
+                            <a asp-action="Edit" asp-route-id="@farmer.Id" class="btn btn-outline-success btn-sm me-2">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@farmer.Id" class="btn btn-outline-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

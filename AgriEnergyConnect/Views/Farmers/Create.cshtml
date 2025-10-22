@@ -1,17 +1,34 @@
 ﻿@model AgriEnergyConnect.Models.Farmer
 
-<h2>Add Farmer</h2>
+@{
+    ViewData["Title"] = "Add Farmer";
+}
 
-<form asp-action="Create" method="post">
-    <div>
-        <label asp-for="Name"></label>
-        <input asp-for="Name" />
-        <span asp-validation-for="Name"></span>
-    </div>
-    <div>
-        <label asp-for="Location"></label>
-        <input asp-for="Location" />
-        <span asp-validation-for="Location"></span>
-    </div>
-    <button type="submit">Save</button>
-</form>
+<div class="card shadow-sm rounded-4 border-0 p-4">
+    <h4 class="text-success fw-bold mb-4">Add New Farmer</h4>
+
+    <form asp-action="Create" method="post" class="needs-validation" novalidate>
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label fw-semibold">Farmer Name</label>
+            <input asp-for="Name" class="form-control" placeholder="Enter farmer name" />
+            <span asp-validation-for="Name" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Location" class="form-label fw-semibold">Location</label>
+            <input asp-for="Location" class="form-control" placeholder="Enter location" />
+            <span asp-validation-for="Location" class="text-danger small"></span>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <a asp-action="Index" class="btn btn-outline-secondary me-2">Cancel</a>
+            <button type="submit" class="btn btn-success">Save Farmer</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
