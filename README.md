@@ -15,7 +15,10 @@
 7. [User Interface](#user-interface)
 8. [Data Validation & Accuracy](#data-validation--accuracy)
 9. [Development Process & Testing](#development-process--testing)
-10. [License](#license)
+10. [SQL Scripts](#sql-scripts)
+11. [Admin Credentials](#admin-credentials)
+12. [Future Enhancements](#future-enhancements)
+13. [License](#license)
 
 ---
 
@@ -41,46 +44,16 @@
 
 ## Setup Instructions
 
-1. Clone the repository:
+1. Open the `AgriEnergyConnect` folder in Visual Studio 2022.
+2. Then open the `.sln` solution file in Visual Studio 2022.
 
-```bash
-git clone https://github.com/yourusername/AgriEnergyConnect.git
-cd AgriEnergyConnect
-```
-
-2. Update the **connection string** in `appsettings.json`:
-
-```json
-"ConnectionStrings": {
-  "DefaultConnection": "Server=tcp:agrienergyconnect.database.windows.net,1433;Initial Catalog=agrienergyconnect;Persist Security Info=False;User ID=YOUR_USERNAME;Password=YOUR_PASSWORD;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-}
-```
-
-3. Restore NuGet packages:
-
-```bash
-dotnet restore
-```
-
-4. Apply migrations to the database:
-
-```bash
-dotnet ef database update
-```
-
-5. Seed sample data (10 farmers, 2 products each) for testing:
+3. Launch the application:
 
 ```bash
 dotnet run
 ```
 
-6. Launch the application:
-
-```bash
-dotnet run
-```
-
-* Navigate to `https://localhost:5001` to access the app
+* Navigate to `https://localhost:5001` to access the app.
 
 ---
 
@@ -147,6 +120,78 @@ dotnet run
 
 ---
 
+## SQL Scripts
+
+### Create Tables
+
+```sql
+CREATE TABLE Farmers (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name NVARCHAR(100) NOT NULL,
+    Location NVARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Products (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name NVARCHAR(100) NOT NULL,
+    Category NVARCHAR(100) NOT NULL,
+    ProductionDate DATE NOT NULL,
+    FarmerId INT NOT NULL,
+    CONSTRAINT FK_Products_Farmers FOREIGN KEY (FarmerId) REFERENCES Farmers(Id) ON DELETE CASCADE
+);
+```
+
+### Seed Sample Data
+
+```sql
+INSERT INTO Farmers (Name, Location) VALUES
+('Xikombiso Dlamini', 'Pretoria'),
+('Rihlatlho Mavhungu', 'Johannesburg'),
+('Tiyani Phiri', 'Nelspruit'),
+('Lufuno Shongwe', 'Polokwane'),
+('Nyiko Tshabalala', 'Soweto'),
+('Rendani Mokoena', 'Tzaneen'),
+('Khensani Ndlovu', 'Mbombela'),
+('Tsakani Hlabangana', 'Thohoyandou'),
+('Vutomi Ramabulana', 'Polokwane'),
+('Mandla Maphosa', 'Pretoria');
+
+INSERT INTO Products (Name, Category, ProductionDate, FarmerId) VALUES
+('Maize', 'Grain', GETDATE(), 1),
+('Vegetables', 'Produce', GETDATE(), 1),
+('Wheat', 'Grain', GETDATE(), 2),
+('Tomatoes', 'Produce', GETDATE(), 2),
+('Sunflowers', 'Grain', GETDATE(), 3),
+('Cabbage', 'Produce', GETDATE(), 3),
+('Sorghum', 'Grain', GETDATE(), 4),
+('Carrots', 'Produce', GETDATE(), 4),
+('Barley', 'Grain', GETDATE(), 5),
+('Onions', 'Produce', GETDATE(), 5),
+('Millet', 'Grain', GETDATE(), 6),
+('Spinach', 'Produce', GETDATE(), 6),
+('Oats', 'Grain', GETDATE(), 7),
+('Peppers', 'Produce', GETDATE(), 7),
+('Rye', 'Grain', GETDATE(), 8),
+('Pumpkins', 'Produce', GETDATE(), 8),
+('Quinoa', 'Grain', GETDATE(), 9),
+('Greenbeans', 'Produce', GETDATE(), 9),
+('Rice', 'Grain', GETDATE(), 10),
+('Lettuce', 'Produce', GETDATE(), 10);
+```
+
+---
+
+## Admin Credentials
+
+For testing purposes, you can log in with the default **Employee/Admin** account:
+
+* **Email:** [admin@agrienergyconnect.com](mailto:admin@agrienergyconnect.com)
+* **Password:** Admin123!
+
+> Note: Change these credentials if deploying to production for security.
+
+---
+
 ## Future Enhancements
 
 * Implement file upload for product images
@@ -160,3 +205,7 @@ dotnet run
 This project is **open-source**. Feel free to fork, modify, and use under the MIT License.
 
 ---
+
+If you want, I can **also create a zipped folder structure guide** for submission so that someone can open the `.sln` and run it immediately without any setup issues.
+
+Do you want me to do that?
