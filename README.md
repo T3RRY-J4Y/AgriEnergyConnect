@@ -1,5 +1,3 @@
----
-
 # Agri-Energy Connect
 
 **Agri-Energy Connect** is a web application that connects South African farmers with renewable energy providers and employees, allowing seamless management of farmer profiles and agricultural products. This prototype demonstrates role-based access, CRUD functionality, and a responsive, user-friendly interface.
